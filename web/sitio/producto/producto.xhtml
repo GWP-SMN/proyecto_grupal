@@ -90,7 +90,12 @@
                         <p:column headerText="Stock">
                             <p:outputLabel value="#{prod.stock} #{prod.detalleUnidad.abreviatura}" />
                         </p:column>
-
+                        
+                        <p:column headerText="Estado">
+                            <p:commandButton value="Habilitado" rendered="#{prod.estado}" style="background: greenyellow ;color: black ;" actionListener="#{productoFormBean.deshabilitar(prod)}" update="tablaProducto"/>
+                            <p:commandButton value="Deshabilitado" rendered="#{!prod.estado}" style="background: orangered;color: black ;" actionListener="#{productoFormBean.habilitar(prod)}" update="tablaProducto"/>
+                        </p:column>
+                        
                         <p:column headerText="Acciones">
 
                             <p:commandButton update=":f" oncomplete="PF('dlg').show()"

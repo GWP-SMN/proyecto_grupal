@@ -116,4 +116,22 @@ public class ProductoDAOImpl implements ProductoDAO,Serializable {
         }
         return listaProductos;
     }
+    @Override
+    public void estado(Producto p,boolean estado){
+        p.setEstado(estado);
+        Session session = null;
+        try {
+            session = HibernateUtil.getSessionFactory().openSession();
+            session.beginTransaction();
+            session.update(p);
+            session.getTransaction().commit();
+        } catch (HibernateException e) {
+            System.out.println(e.getMessage());
+            session.getTransaction().rollback();
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+    }
 }

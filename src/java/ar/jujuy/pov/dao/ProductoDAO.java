@@ -15,4 +15,6 @@ public interface ProductoDAO {
     public void modificar(Producto p);
 
     public void eliminar(Producto p);
+    
+    public void estado(Producto p,boolean estado);
 }

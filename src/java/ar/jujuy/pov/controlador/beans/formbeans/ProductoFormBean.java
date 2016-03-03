@@ -209,5 +209,13 @@ public class ProductoFormBean implements java.io.Serializable {
         }
         return "/resources/img/sin_imagen.png";
     }
+    
+    public void habilitar(Producto p){
+        pdao.estado(p, true);
+    }
+
+    public void deshabilitar(Producto p){
+        pdao.estado(p, false);
+    }
 
 }
