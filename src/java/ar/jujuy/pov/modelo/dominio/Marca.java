@@ -10,6 +10,7 @@ public class Marca  implements java.io.Serializable {
      private int idMarca;
      private String descripcion;
      private boolean estado;
+     private String imagen;
      
 
     public Marca() {
@@ -36,6 +37,14 @@ public class Marca  implements java.io.Serializable {
 
     public void setEstado(boolean estado) {
         this.estado = estado;
+    }
+
+    public String getImagen() {
+        return imagen;
+    }
+
+    public void setImagen(String imagen) {
+        this.imagen = imagen;
     }
     
 }

@@ -5,6 +5,7 @@
  */
 package ar.jujuy.pov.controlador.beans.formbeans;
 
+import ar.jujuy.pov.controlador.beans.ProductoBean;
 import ar.jujuy.pov.dao.ProductoDAO;
 import ar.jujuy.pov.dao.impl.ProductoDAOImpl;
 import ar.jujuy.pov.modelo.dominio.DetalleUnidad;
@@ -29,22 +30,23 @@ import org.primefaces.context.RequestContext;
 @ViewScoped
 public class ProductoFormBean implements java.io.Serializable {
 
+    @ManagedProperty(value = "#{productoBean}")
+    private ProductoBean pb;
+    
     private List<Producto> tabla;
     private List<Producto> tablaProductoHabilitado;
-    private Producto p;
     private Producto producto;
     private ProductoDAO pdao;
-
 
     private Integer tipoId;
     private Integer marcaId;
     private Integer productoId;
     private List<Producto> tablaFiltrada;
     private Integer idUnidad;
+
     public ProductoFormBean() {
         super();
-        p = new Producto();
-        p.setDetalleUnidad(new DetalleUnidad());
+        pb = new ProductoBean();
 
         pdao = new ProductoDAOImpl();
         tabla = pdao.getAll();
@@ -68,12 +70,12 @@ public class ProductoFormBean implements java.io.Serializable {
         this.tabla = tabla;
     }
 
-    public Producto getP() {
-        return p;
+    public ProductoBean getPb() {
+        return pb;
     }
 
-    public void setP(Producto p) {
-        this.p = p;
+    public void setPb(ProductoBean pb) {
+        this.pb = pb;
     }
 
     public List<Producto> getTablaProductoHabilitado() {
@@ -124,16 +126,15 @@ public class ProductoFormBean implements java.io.Serializable {
         this.idUnidad = idUnidad;
     }
 
-    
-    
     //    Metodos de la clase
-    public void limpiarNuevo() {
-        p = new Producto();
+    
+    public void limpiarProducto(){
+        pb=new ProductoBean();
         RequestContext.getCurrentInstance().execute("PF('widNuevoProducto').show()");
     }
-
+    
     public void guardar() {
-        pdao.alta(p);
+        pdao.alta(pb.getProducto());
         tabla = pdao.getAll();
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Operación terminada", "Producto guardado con exito."));
         RequestContext.getCurrentInstance().execute("PF('widNuevoProducto').hide()");
@@ -142,14 +143,14 @@ public class ProductoFormBean implements java.io.Serializable {
     public void guardarTipo() {
         FacesContext context = FacesContext.getCurrentInstance();
         TipoProducto tp = context.getApplication().evaluateExpressionGet(context, "#{tipoProductoFormBean.tpb.tipoProducto}", TipoProducto.class);
-        p.setTipoProducto(tp);
+        pb.getProducto().setTipoProducto(tp);
         RequestContext.getCurrentInstance().execute("PF('widTipo').hide()");
     }
 
     public void guardarMarca() {
         FacesContext context = FacesContext.getCurrentInstance();
         Marca m = context.getApplication().evaluateExpressionGet(context, "#{marcaFormBean.mb.marca}", Marca.class);
-        p.setMarca(m);
+        pb.getProducto().setMarca(m);
         RequestContext.getCurrentInstance().execute("PF('widMarca').hide()");
     }
 
@@ -158,18 +159,14 @@ public class ProductoFormBean implements java.io.Serializable {
     }
 
     //Con estos metos cargo un nuevo producto
-    public void preCargarProducto() {
-        p = new Producto();
-        RequestContext.getCurrentInstance().execute("PF(widNuevoProducto).show()");
-    }
-
+    
     public String cargarProducto() {
 
         String resultado = null;
 
-        if (p != null) {
+        if (pb.getProducto() != null) {
 
-            pdao.alta(p);
+            pdao.alta(pb.getProducto());
             tabla = pdao.getAll();
             FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Producto guardado con exito.", "");
             FacesContext.getCurrentInstance().addMessage(null, facesMessage);
@@ -209,12 +206,12 @@ public class ProductoFormBean implements java.io.Serializable {
         }
         return "/resources/img/sin_imagen.png";
     }
-    
-    public void habilitar(Producto p){
+
+    public void habilitar(Producto p) {
         pdao.estado(p, true);
     }
 
-    public void deshabilitar(Producto p){
+    public void deshabilitar(Producto p) {
         pdao.estado(p, false);
     }
 

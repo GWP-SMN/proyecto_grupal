@@ -54,7 +54,7 @@
                             <p:commandButton value="Buscar" actionListener="#{productoFormBean.buscar()}"  ajax="true" update="frmProducto " />
 
                         </p:panelGrid>
-                        <p:commandButton value="Nuevo" action="#{productoFormBean.preCargarProducto()}" update=":frmNuevo" />
+                        <p:commandButton value="Nuevo" update=":frmNuevo" actionListener="#{productoFormBean.limpiarProducto()}"/>
                     </p:panel>
                 </h:form>
                 <!-- **************************************Boton Alta************************************************ -->
@@ -101,7 +101,7 @@
                             <p:commandButton update=":f" oncomplete="PF('dlg').show()"
                                              icon="ui-icon-search" title="Ver Detalles">
                                 <f:setPropertyActionListener value="#{prod}"
-                                                             target="#{productoFormBean.p}" />
+                                                             target="#{productoFormBean.pb.producto}" />
                             </p:commandButton>
 
                         </p:column>
@@ -120,26 +120,26 @@
 
                         <p:panelGrid columns="2" layout="grid">
                             <f:facet name="header">
-                                <p:graphicImage value="#{productoFormBean.imagen(productoFormBean.p)}" width="200" style="background: grey"/>
+                                <p:graphicImage value="#{productoFormBean.imagen(productoFormBean.pb.producto)}" width="200" style="background: grey"/>
                             </f:facet>
 
                             <p:outputLabel value="Código:" />
-                            <p:outputLabel value="#{productoFormBean.generarCodigo(productoFormBean.p.idProducto)}" />
+                            <p:outputLabel value="#{productoFormBean.generarCodigo(productoFormBean.pb.producto.idProducto)}" />
 
                             <p:outputLabel value="Descripción:" />
-                            <p:outputLabel value="#{productoFormBean.p.descripcion}" />
+                            <p:outputLabel value="#{productoFormBean.pb.producto.descripcion}" />
 
                             <p:outputLabel value="Tipo:" />
-                            <p:outputLabel value="#{productoFormBean.p.tipoProducto.descripcion}" />
+                            <p:outputLabel value="#{productoFormBean.pb.producto.tipoProducto.descripcion}" />
 
                             <p:outputLabel value="Marca:" /> 
-                            <p:outputLabel value="#{productoFormBean.p.marca.descripcion}"/>
+                            <p:outputLabel value="#{productoFormBean.pb.producto.marca.descripcion}"/>
 
                             <p:outputLabel value="Stock:" />
-                            <h:outputText value="#{productoFormBean.p.stock} #{productoFormBean.p.detalleUnidad.abreviatura}" />
+                            <h:outputText value="#{productoFormBean.pb.producto.stock} #{productoFormBean.pb.producto.detalleUnidad.abreviatura}" />
 
                             <p:outputLabel value="Estado:" />
-                            <p:outputLabel value="#{productoFormBean.p.estado}" />
+                            <p:outputLabel value="#{productoFormBean.pb.producto.estado}" />
 
                         </p:panelGrid>
                         <p:commandButton oncomplete="PF('dlg').hide()" value="Cerrar"/>
@@ -155,7 +155,7 @@
                         <p:panelGrid columns="2" id="pnlgProducto">
 
                             <p:outputLabel value="Descripcion:"/>
-                            <p:inputText value="#{productoFormBean.p.descripcion}"/>
+                            <p:inputText value="#{productoFormBean.pb.producto.descripcion}"/>
 
                             <p:commandButton value="Aceptar" icon="ui-icon-check"
                                              update=":frmProducto :grwMensaje" ajax="true"
@@ -166,7 +166,6 @@
                         </p:panelGrid>
                     </h:form>
                 </p:dialog>
-
 
             </ui:define>
 

@@ -14,5 +14,8 @@
         <property name="estado" type="boolean">
             <column name="estado" not-null="true"/>
         </property>
+        <property name="imagen" type="string" length="30">
+            <column name="imagen"/>
+        </property>
     </class>
 </hibernate-mapping>
