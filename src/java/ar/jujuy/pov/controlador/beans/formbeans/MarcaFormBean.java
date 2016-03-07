@@ -9,6 +9,8 @@ import ar.jujuy.pov.controlador.beans.MarcaBean;
 import ar.jujuy.pov.dao.MarcaDAO;
 import ar.jujuy.pov.dao.impl.MarcaDAOImpl;
 import ar.jujuy.pov.modelo.dominio.Marca;
+import ar.jujuy.pov.modelo.dominio.Producto;
+import java.io.File;
 import java.util.List;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -60,20 +62,20 @@ public class MarcaFormBean implements java.io.Serializable{
     
     //    Metodos de la clase
     
+    public String imagen(Marca m) {
+        System.out.println("imagen:"+m.getImagen());
+        if (m.getImagen() != null) {
+            File f = new File(FacesContext.getCurrentInstance().getExternalContext().getRealPath("") + File.separator + "galeria" + File.separator + "marca" + File.separator + m.getImagen());
+            if (f.exists()) {
+                return "/galeria/marca/" + m.getImagen();
+            }
+        }
+        return "/resources/img/sin_imagen.png";
+    }
+    
     public void  limpiarNuevo(){
         mb.setMarca(new Marca());
         RequestContext.getCurrentInstance().execute("PF('widNuevaMarca').show()");
-    }
-    
-    public void onRowEdit(RowEditEvent event) {
-        mdao.modificar((Marca) event.getObject());
-        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO,"Editado con exito.","");
-        FacesContext.getCurrentInstance().addMessage(null, msg);
-    }
-     
-    public void onRowCancel(RowEditEvent event) {
-        FacesMessage msg = new FacesMessage("Edicion cancelada.", "");
-        FacesContext.getCurrentInstance().addMessage(null, msg);
     }
     
     public void guardar (){

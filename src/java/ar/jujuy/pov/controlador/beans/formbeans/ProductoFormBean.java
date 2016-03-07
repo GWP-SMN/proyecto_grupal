@@ -199,7 +199,7 @@ public class ProductoFormBean implements java.io.Serializable {
 
     public String imagen(Producto p) {
         if (p.getImagen() != null) {
-            File f = new File(FacesContext.getCurrentInstance().getExternalContext().getRealPath("") + File.separator + "galeria" + File.separator + "usuario" + File.separator + p.getImagen());
+            File f = new File(FacesContext.getCurrentInstance().getExternalContext().getRealPath("") + File.separator + "galeria" + File.separator + "producto" + File.separator + p.getImagen());
             if (f.exists()) {
                 return "/galeria/producto/" + p.getImagen();
             }
