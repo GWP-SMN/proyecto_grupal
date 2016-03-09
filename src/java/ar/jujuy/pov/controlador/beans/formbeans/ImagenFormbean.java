@@ -7,6 +7,7 @@ package ar.jujuy.pov.controlador.beans.formbeans;
 
 import ar.jujuy.pov.dao.UsuarioDAO;
 import ar.jujuy.pov.dao.impl.UsuarioDAOImpl;
+import ar.jujuy.pov.modelo.dominio.Marca;
 import ar.jujuy.pov.modelo.dominio.Usuario;
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +17,7 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.imageio.stream.FileImageOutputStream;
 import javax.servlet.ServletContext;
+import javax.servlet.http.Part;
 import org.primefaces.model.CroppedImage;
 import org.primefaces.model.UploadedFile;
 
@@ -25,8 +27,10 @@ public class ImagenFormbean implements java.io.Serializable{
 
     private CroppedImage imageRecortada;
     private UploadedFile uploadedFile;
+    
     private String imagen;
-
+    private Part uploadedImagen;
+    
     public ImagenFormbean() {
         super();
     }
@@ -55,6 +59,15 @@ public class ImagenFormbean implements java.io.Serializable{
     public void setImagen(String imagen) {
         this.imagen = imagen;
     }
+
+    public Part getUploadedImagen() {
+        return uploadedImagen;
+    }
+
+    public void setUploadedImagen(Part uploadedImagen) {
+        this.uploadedImagen = uploadedImagen;
+    }
+    
 
 //    metodos de 
     public void subirImagen() {
@@ -104,8 +117,15 @@ public class ImagenFormbean implements java.io.Serializable{
 
         }
     }
+    
+    public void subirImagenMarca(Marca m){
+        
+        
+    }
 
     private String extencion(String tipo) {
         return "." + tipo.substring(tipo.indexOf("/") + 1, tipo.length());
     }
+    
+    
 }

@@ -8,6 +8,7 @@ package ar.jujuy.pov.dao.impl;
 import ar.jujuy.pov.dao.MarcaDAO;
 import ar.jujuy.pov.hibernate.configuracion.HibernateUtil;
 import ar.jujuy.pov.modelo.dominio.Marca;
+import ar.jujuy.pov.modelo.dominio.Producto;
 import java.io.Serializable;
 import java.util.List;
 import org.hibernate.Criteria;
@@ -18,7 +19,7 @@ import org.hibernate.Session;
  *
  * @author FAMILIA
  */
-public class MarcaDAOImpl implements MarcaDAO,Serializable {
+public class MarcaDAOImpl implements MarcaDAO, Serializable {
 
     @Override
     public List<Marca> getAll() {
@@ -27,7 +28,7 @@ public class MarcaDAOImpl implements MarcaDAO,Serializable {
         try {
             session = HibernateUtil.getSessionFactory().openSession();
             Criteria criteria = session.createCriteria(Marca.class);
-            
+
             listaMarcas = criteria.list();
         } catch (HibernateException e) {
             System.out.println(e.getMessage());
@@ -93,4 +94,25 @@ public class MarcaDAOImpl implements MarcaDAO,Serializable {
             }
         }
     }
+
+    @Override
+    public void estado(Marca m,boolean estado) {
+
+        m.setEstado(estado);
+        Session session = null;
+        try {
+            session = HibernateUtil.getSessionFactory().openSession();
+            session.beginTransaction();
+            session.update(m);
+            session.getTransaction().commit();
+        } catch (HibernateException e) {
+            System.out.println(e.getMessage());
+            session.getTransaction().rollback();
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+    }
+
 }

@@ -13,4 +13,6 @@ public interface MarcaDAO {
     public void modificar(Marca m);
 
     public void eliminar(Marca m);
+    
+    public void estado(Marca m,boolean estado);
 }

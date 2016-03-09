@@ -3,7 +3,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <h:body>
 
@@ -22,7 +23,9 @@
                     <!-- **************************************Boton Alta************************************************ -->
 
                     <div class="botonAlta">
-                        <p:commandButton value="Nuevo" actionListener="#{marcaFormBean.limpiarNuevo()}" update=":frmNuevo" />
+                        <p:commandButton value="Nuevo" actionListener="#{marcaFormBean.limpiarNuevo()}" update=":frmNuevo">
+                            <p:resetInput target=":frmNuevo"/>
+                        </p:commandButton>
                     </div>
 
                     <!-- ******************************************TABLA DE MARCAS********************************************* -->
@@ -39,59 +42,101 @@
                                 <p:outputLabel value="#{marca.descripcion}"/>
                             </p:column>
 
+                            <p:column headerText="Estado">
+                                <p:commandButton value="Habilitado" rendered="#{marca.estado}" style="background: greenyellow ;color: black ;" actionListener="#{marcaFormBean.deshabilitar(marca)}" update="tablaMarca"/>
+                                <p:commandButton value="Deshabilitado" rendered="#{!marca.estado}" style="background: orangered;color: black ;" actionListener="#{marcaFormBean.habilitar(marca)}" update="tablaMarca"/>
+                            </p:column>
+
                             <p:column headerText="Acciones">
-
-                                <p:commandButton id="btnBajaMarca" icon="ui-icon-closethick"
-                                                 oncomplete="PF('confirmarBajaMarca').show()"
-                                                 update=":frmConfirmacionBaja"
-                                                 actionListener="#{marcaFormBean.mb.setMarca(marca)}"
-                                                 ajax="true">
-                                </p:commandButton>
-
+                                <p:commandButton icon="ui-icon-search" actionListener="#{marcaFormBean.mb.setMarca(marca)}"
+                                                 oncomplete="PF('widVerMarca').show()" update=":frmVerMarca" title="Visualiza marca."/>
+                                <p:commandButton icon="ui-icon-arrowthickstop-1-n" title="Subir una imagen para marca."/>
+                                <p:commandButton icon="ui-icon-pencil" title="Edita la Marca."/>
                             </p:column>
 
                         </p:dataTable>
                     </div>
 
                 </h:form>
+                <!-- **************************************POPUP VER MARCA************************************************ -->
 
-
-
-                <!-- **************************************POPUP CONFIRMACION DE BAJA************************************************ -->
-
-                <h:form id="frmConfirmacionBaja">
-
-                    <p:confirmDialog id="dlgConfirmarBajaMarca" 
-                                     message="¿Esta seguro?"
-                                     header="Eliminar" severity="alert"
-                                     widgetVar="confirmarBajaMarca">
-                        <p:commandButton value="SI" icon="ui-icon-check"
-                                         update=":frmMarca:tablaMarca :frmMarca:growlMarca" ajax="true"
-                                         actionListener="#{marcaFormBean.eliminar()}" />
-                        <p:commandButton value="NO" icon="ui-icon-closethick"
-                                         oncomplete="PF('confirmarBajaMarca').hide()" />
-                    </p:confirmDialog>
-
-                </h:form>
-
-                <!-- **************************************POPUP ALTA************************************************ -->
-
-                <p:dialog widgetVar="widNuevaMarca" header="Nueva Marca " modal="true">
-                    <h:form id="frmNuevo">
-                        <p:panelGrid columns="2" id="pnlgMarca">
-                            <p:outputLabel value="Descripcion:"/>
-                            <p:inputText value="#{marcaFormBean.mb.marca.descripcion}"/>
-
-                            <p:commandButton value="Aceptar" icon="ui-icon-check"
-                                             update=":frmMarca :frmMarca:growlMarca" ajax="true"
-                                             actionListener="#{marcaFormBean.guardar()}" />
-                            <p:commandButton value="Cancelar" icon="ui-icon-closethick"
-                                             oncomplete="PF('widNuevaMarca').hide()" />
-
+                <p:dialog widgetVar="widVerMarca" header="Marca" modal="true">
+                    <h:form id="frmVerMarca">
+                        <p:panelGrid>
+                            <f:facet name="header">
+                                <p:graphicImage value="#{marcaFormBean.imagen(marcaFormBean.mb.marca)}" width="200" style="background: grey"/>
+                            </f:facet>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Descripción:"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{marcaFormBean.mb.marca.descripcion}"/>        
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Estado:"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{marcaFormBean.mb.marca.estado}"/>        
+                                </p:column>
+                            </p:row>
+                            <p:row style="text-align: center">
+                                <p:column colspan="2">
+                                    <p:commandButton value="cerrar" oncomplete="PF('widVerMarca').hide()"/>
+                                </p:column>
+                            </p:row>
                         </p:panelGrid>
                     </h:form>
                 </p:dialog>
 
+                <!-- **************************************POPUP ALTA************************************************ -->
+
+                <p:dialog widgetVar="widNuevaMarca" header="Nueva Marca " modal="true">
+                    <h:form id="frmNuevo" enctype="multipart/form-data">
+                        <p:panelGrid>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel for="idDescripcion" value="Descripcion:"/>
+                                </p:column>
+                                <p:column>
+                                    <p:inputText id="idDescripcion" value="#{marcaFormBean.mb.marca.descripcion}" required="true" requiredMessage="Descripción necesaria."
+                                                 maxlength="30"/>
+                                </p:column>
+                            </p:row>
+
+                            <p:row style="text-align: center">
+                                <p:column colspan="2">
+                                    <p:commandButton value="Aceptar" icon="ui-icon-check"
+                                                     update=":grwMensaje :frmNuevo" actionListener="#{marcaFormBean.confirmarNuevoShow()}"/>
+
+                                    <p:commandButton value="Cancelar" icon="ui-icon-closethick"
+                                                     oncomplete="PF('widNuevaMarca').hide()" />
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </h:form>
+                </p:dialog>
+
+                <p:dialog widgetVar="widNuevoConfirmar" modal="true" header="Confirmar">
+                    <h:form>
+                        <p:panelGrid>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="¿Desea confirmar nuevo Dettalle?"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:commandButton value="Si" actionListener="#{marcaFormBean.guardar()}"
+                                                     icon="ui-icon-check" update="frmMarca" oncomplete="PF('widNuevoConfirmar').hide()"/>
+                                    <p:commandButton value="No" icon="ui-icon-closethick" oncomplete="PF('widNuevoConfirmar').hide()"/>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </h:form>
+                </p:dialog>
 
             </ui:define>
 
