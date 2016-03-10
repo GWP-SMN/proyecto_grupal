@@ -20,7 +20,7 @@
                             <div class="ui-grid-col-12" align="center">
                                 <p:panel header="Avatar Personalizar">
                                     <h:form>
-                                        <p:imageCropper value="#{imagenFormbean.imageRecortada}" image="/temp/usuario/#{imagenFormbean.imagen}" alt="Debe cargar una imagen." aspectRatio="1"/>
+                                        <p:imageCropper value="#{imagenFormbean.imageRecortada}" image="/temp/usuario/#{imagenFormbean.imagen}" alt="Debe cargar una imagen." aspectRatio="1" boxWidth="400"/>
                                         <p:commandButton value="Guardar" actionListener="#{imagenFormbean.guardarImagen()}" update=":grwMensaje" ajax="false"/>
                                     </h:form>
                                     <hr/>

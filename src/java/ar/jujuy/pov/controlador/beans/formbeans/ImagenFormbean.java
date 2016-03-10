@@ -10,7 +10,6 @@ import ar.jujuy.pov.dao.UsuarioDAO;
 import ar.jujuy.pov.dao.impl.MarcaDAOImpl;
 import ar.jujuy.pov.dao.impl.UsuarioDAOImpl;
 import ar.jujuy.pov.modelo.dominio.Marca;
-import ar.jujuy.pov.modelo.dominio.Producto;
 import ar.jujuy.pov.modelo.dominio.Usuario;
 import java.io.File;
 import java.io.IOException;
@@ -126,6 +125,10 @@ public class ImagenFormbean implements java.io.Serializable {
                 m.setImagen(imagen);
                 MarcaDAO marcaDAO = new MarcaDAOImpl();
                 marcaDAO.modificar(m);
+
+                FacesContext context = FacesContext.getCurrentInstance();
+                MarcaFormBean marcaFormBean = context.getApplication().evaluateExpressionGet(context, "#{marcaFormBean}", MarcaFormBean.class);
+                marcaFormBean.setTabla(marcaDAO.getAll());
 
                 RequestContext.getCurrentInstance().execute("PF('widCortar').hide()");
                 RequestContext.getCurrentInstance().execute("PF('widSubirImagen').hide()");

@@ -92,8 +92,8 @@
 
                 <p:dialog widgetVar="widCortar" modal="true" header="Recortar">
                     <h:form id="frmRecortar">
-                        <p:commandButton value="Guardar" actionListener="#{imagenFormbean.archivoGuardarMarca(marcaFormBean.mb.marca)}" update=":grwMensaje :frmMarca" ajax="false"/>
-                        <p:imageCropper value="#{imagenFormbean.imageRecortada}" image="/temp/marca/#{imagenFormbean.imagen}" 
+                        <p:commandButton value="Guardar" actionListener="#{imagenFormbean.archivoGuardarMarca(marcaFormBean.mb.marca)}" update=":grwMensaje :frmMarca"/>
+                        <p:imageCropper value="#{imagenFormbean.imageRecortada}" image="/temp/marca/#{imagenFormbean.imagen}" boxWidth="400"
                                         aspectRatio="1.4" rendered="#{imagenFormbean.imagenCargada()}"/>
                     </h:form>
                 </p:dialog>
