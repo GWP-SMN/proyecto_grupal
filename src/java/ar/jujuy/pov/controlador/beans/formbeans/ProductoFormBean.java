@@ -8,7 +8,6 @@ package ar.jujuy.pov.controlador.beans.formbeans;
 import ar.jujuy.pov.controlador.beans.ProductoBean;
 import ar.jujuy.pov.dao.ProductoDAO;
 import ar.jujuy.pov.dao.impl.ProductoDAOImpl;
-import ar.jujuy.pov.modelo.dominio.DetalleUnidad;
 import ar.jujuy.pov.modelo.dominio.Marca;
 import ar.jujuy.pov.modelo.dominio.Producto;
 import ar.jujuy.pov.modelo.dominio.TipoProducto;

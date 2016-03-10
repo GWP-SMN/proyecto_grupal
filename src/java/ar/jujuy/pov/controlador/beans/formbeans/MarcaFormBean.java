@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ar.jujuy.pov.controlador.beans.formbeans;
 
 import ar.jujuy.pov.controlador.beans.MarcaBean;
@@ -18,10 +13,6 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import org.primefaces.context.RequestContext;
 
-/**
- *
- * @author FAMILIA
- */
 @ManagedBean
 @ViewScoped
 public class MarcaFormBean implements java.io.Serializable {
@@ -30,19 +21,17 @@ public class MarcaFormBean implements java.io.Serializable {
     private MarcaBean mb;
     private List<Marca> tabla;
     private MarcaDAO mdao;
-    
+
     private boolean imagen;
-    
+
     public MarcaFormBean() {
 
         super();
         mdao = new MarcaDAOImpl();
         tabla = mdao.getAll();
-
     }
 
     //    Getter y Setter de los atributos
-    
     public MarcaBean getMb() {
         return mb;
     }
@@ -67,14 +56,16 @@ public class MarcaFormBean implements java.io.Serializable {
         this.imagen = imagen;
     }
 
-    
     //    Metodos de la clase
-    
-    public void confirmarNuevoShow(){
+    public void confirmarNuevoShow() {
         RequestContext.getCurrentInstance().execute("PF('widNuevoConfirmar').show()");
     }
-    
-    public String imagen(Marca m) {
+
+    public void confirmarModificarShow() {
+        RequestContext.getCurrentInstance().execute("PF('widConfirmarModificar').show()");
+    }
+
+    public String direccionImagen(Marca m) {
         if (m.getImagen() != null) {
             File f = new File(FacesContext.getCurrentInstance().getExternalContext().getRealPath("") + File.separator + "galeria" + File.separator + "marca" + File.separator + m.getImagen());
             if (f.exists()) {
@@ -85,8 +76,23 @@ public class MarcaFormBean implements java.io.Serializable {
     }
 
     public void limpiarNuevo() {
-        mb.setMarca(new Marca());
+        mb = new MarcaBean();
         RequestContext.getCurrentInstance().execute("PF('widNuevaMarca').show()");
+    }
+
+    public void cargarMarca(Marca m) {
+        mb = new MarcaBean();
+        mb.setMarca(new Marca(m.getIdMarca(), m.getDescripcion(), m.isEstado(), m.getImagen()));
+        RequestContext.getCurrentInstance().execute("PF('widModificarMarca').show()");
+    }
+
+    public void cargarMarcaImagen(Marca m) {
+        FacesContext context = FacesContext.getCurrentInstance();
+        ImagenFormbean formbean = context.getApplication().evaluateExpressionGet(context, "#{imagenFormbean}", ImagenFormbean.class);
+        formbean.setImagen("");
+        mb = new MarcaBean();
+        mb.setMarca(new Marca(m.getIdMarca(), m.getDescripcion(), m.isEstado(), m.getImagen()));
+        RequestContext.getCurrentInstance().execute("PF('widSubirImagen').show()");
     }
 
     public void guardar() {
@@ -101,13 +107,14 @@ public class MarcaFormBean implements java.io.Serializable {
 
     }
 
-    public void eliminar() {
-
-        mdao.eliminar(mb.getMarca());
+    public void modificar() {
+        mdao.modificar(mb.getMarca());
         tabla = mdao.getAll();
-        FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Marca eliminada con exito.", "");
+
+        FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Marca modificada.", "Exito");
         FacesContext.getCurrentInstance().addMessage(null, facesMessage);
-        RequestContext.getCurrentInstance().execute("PF('confirmarBajaMarca').hide()");
+        RequestContext.getCurrentInstance().execute("PF('widModificarMarca').hide()");
+        RequestContext.getCurrentInstance().execute("PF('widConfirmarModificar').hide()");
     }
 
     public void habilitar(Marca m) {

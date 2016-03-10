@@ -16,55 +16,95 @@
             <ui:define name="content">
 
 
-                <h:form id="frmMarca">
 
-                    <p:growl id="growlMarca" globalOnly="true" showDetail="true" autoUpdate="true" />
 
-                    <!-- **************************************Boton Alta************************************************ -->
+                <p:growl id="growlMarca" globalOnly="true" showDetail="true" autoUpdate="true" />
 
-                    <div class="botonAlta">
+                <!-- **************************************Boton Alta************************************************ -->
+
+                <div class="botonAlta">
+                    <h:form>
                         <p:commandButton value="Nuevo" actionListener="#{marcaFormBean.limpiarNuevo()}" update=":frmNuevo">
                             <p:resetInput target=":frmNuevo"/>
                         </p:commandButton>
-                    </div>
+                    </h:form>
+                </div>
 
-                    <!-- ******************************************TABLA DE MARCAS********************************************* -->
+                <!-- ******************************************TABLA DE MARCAS********************************************* -->
+                <h:form id="frmMarca" enctype="multipart/form-data">
 
-                    <div class="tabla">	
+                    <p:dataTable id="tablaMarca" var="marca" reflow="true"
+                                 value="#{marcaFormBean.tabla}" rows="5" paginator="true">
 
-                        <p:dataTable id="tablaMarca" var="marca" reflow="true"
-                                     value="#{marcaFormBean.tabla}" rows="5" paginator="true">
+                        <p:column headerText="Imagen" width="125">
+                            <p:graphicImage value="#{marcaFormBean.direccionImagen(marca)}" width="120" cache="false"/>
+                        </p:column>
+                        <p:column headerText="Descripcion" > 
+                            <p:outputLabel value="#{marca.descripcion}"/>
+                        </p:column>
 
-                            <p:column headerText="Imagen" width="125">
-                                <p:graphicImage value="#{marcaFormBean.imagen(marca)}" width="120"/>
-                            </p:column>
-                            <p:column headerText="Descripcion" > 
-                                <p:outputLabel value="#{marca.descripcion}"/>
-                            </p:column>
+                        <p:column headerText="Estado">
+                            <p:commandButton value="Habilitado" rendered="#{marca.estado}" style="background: greenyellow ;color: black ;" actionListener="#{marcaFormBean.deshabilitar(marca)}" update="tablaMarca"/>
+                            <p:commandButton value="Deshabilitado" rendered="#{!marca.estado}" style="background: orangered;color: black ;" actionListener="#{marcaFormBean.habilitar(marca)}" update="tablaMarca"/>
+                        </p:column>
 
-                            <p:column headerText="Estado">
-                                <p:commandButton value="Habilitado" rendered="#{marca.estado}" style="background: greenyellow ;color: black ;" actionListener="#{marcaFormBean.deshabilitar(marca)}" update="tablaMarca"/>
-                                <p:commandButton value="Deshabilitado" rendered="#{!marca.estado}" style="background: orangered;color: black ;" actionListener="#{marcaFormBean.habilitar(marca)}" update="tablaMarca"/>
-                            </p:column>
+                        <p:column headerText="Acciones">
 
-                            <p:column headerText="Acciones">
-                                <p:commandButton icon="ui-icon-search" actionListener="#{marcaFormBean.mb.setMarca(marca)}"
-                                                 oncomplete="PF('widVerMarca').show()" update=":frmVerMarca" title="Visualiza marca."/>
-                                <p:commandButton icon="ui-icon-arrowthickstop-1-n" title="Subir una imagen para marca."/>
-                                <p:commandButton icon="ui-icon-pencil" title="Edita la Marca."/>
-                            </p:column>
+                            <p:commandButton icon="ui-icon-search" actionListener="#{marcaFormBean.mb.setMarca(marca)}"
+                                             oncomplete="PF('widVerMarca').show()" update=":frmVerMarca" title="Visualiza marca."/>
 
-                        </p:dataTable>
-                    </div>
+                            <p:commandButton icon="ui-icon-arrowthickstop-1-n" title="Subir una imagen para marca." 
+                                             actionListener="#{marcaFormBean.cargarMarcaImagen(marca)}" update=":frmSubirImagen"/>
+
+                            <p:commandButton icon="ui-icon-pencil" title="Edita la Marca." update=":frmModificar"
+                                             actionListener="#{marcaFormBean.cargarMarca(marca)}" >
+                                <p:resetInput target=":frmModificar"/>
+                            </p:commandButton>
+
+                        </p:column>
+
+                    </p:dataTable>
 
                 </h:form>
+                <!-- **************************************POPUP SUBIR IMAGEN********************************************* -->
+
+                <p:dialog widgetVar="widSubirImagen" header="Subir Imagen" modal="true">
+                    <h:form id="frmSubirImagen" enctype="multipart/form-data">
+                        <p:panelGrid>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Imagen"/>
+                                </p:column>
+                                <p:column>
+                                    <p:fileUpload value="#{imagenFormbean.uploadedFile}"  mode="simple"
+                                                  allowTypes="/(\.|\/)(gif|jpe?g|png)$/"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2" style="text-align: center">
+                                    <p:commandButton value="Subir archivo" update=":grwMensaje" ajax="false" actionListener="#{imagenFormbean.archivoSubidoMarca(marcaFormBean.mb.marca)}"/>
+                                    <p:commandButton value="Cerrar" icon="ui-icon-closethick" oncomplete="PF('widSubirImagen').hide()"/>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </h:form>    
+                </p:dialog>
+
+                <p:dialog widgetVar="widCortar" modal="true" header="Recortar">
+                    <h:form id="frmRecortar">
+                        <p:commandButton value="Guardar" actionListener="#{imagenFormbean.archivoGuardarMarca(marcaFormBean.mb.marca)}" update=":grwMensaje :frmMarca" ajax="false"/>
+                        <p:imageCropper value="#{imagenFormbean.imageRecortada}" image="/temp/marca/#{imagenFormbean.imagen}" 
+                                        aspectRatio="1.4" rendered="#{imagenFormbean.imagenCargada()}"/>
+                    </h:form>
+                </p:dialog>
+
                 <!-- **************************************POPUP VER MARCA************************************************ -->
 
-                <p:dialog widgetVar="widVerMarca" header="Marca" modal="true">
-                    <h:form id="frmVerMarca">
+                <p:dialog widgetVar="widVerMarca" header="Ver Marca" modal="true">
+                    <h:form id="frmVerMarca" enctype="multipart/form-data">
                         <p:panelGrid>
                             <f:facet name="header">
-                                <p:graphicImage value="#{marcaFormBean.imagen(marcaFormBean.mb.marca)}" width="200" style="background: grey"/>
+                                <p:graphicImage value="#{marcaFormBean.direccionImagen(marcaFormBean.mb.marca)}" width="200" style="background: grey"/>
                             </f:facet>
                             <p:row>
                                 <p:column>
@@ -91,6 +131,47 @@
                     </h:form>
                 </p:dialog>
 
+                <!-- **************************************POPUP MODIFICAR************************************************ -->
+                <p:dialog widgetVar="widModificarMarca" header="Modificar Marca" modal="true">
+                    <h:form id="frmModificar">
+                        <p:panelGrid>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Descripción:"/>
+                                </p:column>
+                                <p:column>
+                                    <p:inputText value="#{marcaFormBean.mb.marca.descripcion}" maxlength="30" required="true" 
+                                                 requiredMessage="Descripción necesaria."/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2" style="text-align: center">
+                                    <p:commandButton value="Aceptar" icon="ui-icon-check" actionListener="#{marcaFormBean.confirmarModificarShow()}"/>
+                                    <p:commandButton value="Cancelar" icon="ui-icon-closethick" oncomplete="PF('widModificarMarca').hide()"/>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </h:form>                   
+                </p:dialog>
+
+                <p:dialog widgetVar="widConfirmarModificar" header="Confirmar" modal="true">
+                    <h:form>
+                        <p:panelGrid>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="¿Desea confirmar la modificación de esta marca?"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column style="text-align: center">
+                                    <p:commandButton value="Aceptar" icon="ui-icon-check" actionListener="#{marcaFormBean.modificar()}" update=":frmMarca :grwMensaje"/>
+                                    <p:commandButton value="Cancelar" icon="ui-icon-closethick" oncomplete="PF('widConfirmarModificar').hide()"/>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </h:form>
+                </p:dialog>
+
                 <!-- **************************************POPUP ALTA************************************************ -->
 
                 <p:dialog widgetVar="widNuevaMarca" header="Nueva Marca " modal="true">
@@ -101,8 +182,8 @@
                                     <p:outputLabel for="idDescripcion" value="Descripcion:"/>
                                 </p:column>
                                 <p:column>
-                                    <p:inputText id="idDescripcion" value="#{marcaFormBean.mb.marca.descripcion}" required="true" requiredMessage="Descripción necesaria."
-                                                 maxlength="30"/>
+                                    <p:inputText id="idDescripcion" value="#{marcaFormBean.mb.marca.descripcion}" required="true" 
+                                                 requiredMessage="Descripción necesaria." maxlength="30"/>
                                 </p:column>
                             </p:row>
 
