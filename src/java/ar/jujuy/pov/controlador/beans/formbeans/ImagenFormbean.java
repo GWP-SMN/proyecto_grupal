@@ -160,7 +160,10 @@ public class ImagenFormbean implements java.io.Serializable {
                     RequestContext.getCurrentInstance().execute("PF('widCortar').show()");
                 } catch (IOException ex) {
                     Logger.getLogger(ImagenFormbean.class.getName()).log(Level.SEVERE, null, ex);
+
                 }
+            } else {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "¡Error!", "No selecciono archivo."));
             }
         }
 

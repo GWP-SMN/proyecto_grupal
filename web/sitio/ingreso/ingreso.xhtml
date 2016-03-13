@@ -27,13 +27,13 @@
                                         <p:panelGrid columns="4" layout="grid">
                                             <p:outputLabel value="Desde: "/>
                                             <p:calendar pattern="dd/MM/yyyy" mask="true" maxdate="#{encabezadoIngresoFormBean.hoy}"
-                                            size="10" maxlength="10" locale="es"
-                                            value="#{encabezadoIngresoFormBean.desde}"/>
-                                            
+                                                        size="10" maxlength="10" locale="es"
+                                                        value="#{encabezadoIngresoFormBean.desde}"/>
+
                                             <p:outputLabel value="Hasta: "/>
                                             <p:calendar pattern="dd/MM/yyyy" mask="true" maxdate="#{encabezadoIngresoFormBean.hoy}"
-                                            size="10" maxlength="10" locale="es"
-                                            value="#{encabezadoIngresoFormBean.hasta}"/>
+                                                        size="10" maxlength="10" locale="es"
+                                                        value="#{encabezadoIngresoFormBean.hasta}"/>
 
                                             <p:outputLabel value="Factura: "/>
                                             <p:inputText value="#{encabezadoIngresoFormBean.eiBuscado.numeroFactura}"/>
@@ -51,7 +51,16 @@
                                             </p:panel>
 
                                         </p:panelGrid>
-                                        
+                                        <p:panel>
+                                            <p:outputLabel value="Mostrar: "/>
+                                            <p:selectOneRadio value="#{encabezadoIngresoFormBean.cantidad}" converter="#{javax.faces.convert.IntegerConverter}">
+                                                <f:selectItem itemLabel="Todos" itemValue="0" />
+                                                <f:selectItem itemLabel="50" itemValue="50" />
+                                                <f:selectItem itemLabel="100" itemValue="100" />
+                                                <f:selectItem itemLabel="150" itemValue="150" />
+                                            </p:selectOneRadio>
+                                        </p:panel>
+
                                         <p:commandButton value="Filtrar" actionListener="#{encabezadoIngresoFormBean.filtrarTabla()}" update=":frmIngreso"/>
                                         <p:commandButton value="Limpiar" actionListener="#{encabezadoIngresoFormBean.limpiarFiltro()}" update="frmFiltro"/>
                                     </p:panel>

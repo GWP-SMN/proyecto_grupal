@@ -24,6 +24,10 @@ public class MarcaFormBean implements java.io.Serializable {
 
     private boolean imagen;
 
+    private Boolean estado;
+    private String descripcion;
+    private int cantidad;
+    
     public MarcaFormBean() {
 
         super();
@@ -32,6 +36,31 @@ public class MarcaFormBean implements java.io.Serializable {
     }
 
     //    Getter y Setter de los atributos
+
+    public int getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(int cantidad) {
+        this.cantidad = cantidad;
+    }
+
+    public Boolean getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Boolean estado) {
+        this.estado = estado;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+    
     public MarcaBean getMb() {
         return mb;
     }
@@ -125,4 +154,7 @@ public class MarcaFormBean implements java.io.Serializable {
         mdao.estado(m, false);
     }
 
+    public void filtrar(){
+        tabla=mdao.filtrar(descripcion,estado,cantidad);
+    }
 }
