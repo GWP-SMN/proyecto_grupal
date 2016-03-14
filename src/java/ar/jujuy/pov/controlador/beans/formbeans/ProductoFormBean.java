@@ -31,17 +31,15 @@ public class ProductoFormBean implements java.io.Serializable {
 
     @ManagedProperty(value = "#{productoBean}")
     private ProductoBean pb;
-    
+
     private List<Producto> tabla;
     private List<Producto> tablaProductoHabilitado;
     private Producto producto;
     private ProductoDAO pdao;
 
-    private Integer tipoId;
-    private Integer marcaId;
-    private Integer productoId;
     private List<Producto> tablaFiltrada;
-    private Integer idUnidad;
+
+    private boolean descripcionMarcaBandera;
 
     public ProductoFormBean() {
         super();
@@ -52,6 +50,14 @@ public class ProductoFormBean implements java.io.Serializable {
         tablaProductoHabilitado = pdao.getAllTrue();
     }
 //    Getter y Setter de los atributos
+
+    public boolean isDescripcionMarcaBandera() {
+        return descripcionMarcaBandera;
+    }
+
+    public void setDescripcionMarcaBandera(boolean descripcionMarcaBandera) {
+        this.descripcionMarcaBandera = descripcionMarcaBandera;
+    }
 
     public Producto getProducto() {
         return producto;
@@ -85,30 +91,6 @@ public class ProductoFormBean implements java.io.Serializable {
         this.tablaProductoHabilitado = tablaProductoHabilitado;
     }
 
-    public Integer getTipoId() {
-        return tipoId;
-    }
-
-    public void setTipoId(Integer tipoId) {
-        this.tipoId = tipoId;
-    }
-
-    public Integer getMarcaId() {
-        return marcaId;
-    }
-
-    public void setMarcaId(Integer marcaId) {
-        this.marcaId = marcaId;
-    }
-
-    public Integer getProductoId() {
-        return productoId;
-    }
-
-    public void setProductoId(Integer productoId) {
-        this.productoId = productoId;
-    }
-
     public List<Producto> getTablaFiltrada() {
         return tablaFiltrada;
     }
@@ -117,24 +99,17 @@ public class ProductoFormBean implements java.io.Serializable {
         this.tablaFiltrada = tablaFiltrada;
     }
 
-    public Integer getIdUnidad() {
-        return idUnidad;
-    }
-
-    public void setIdUnidad(Integer idUnidad) {
-        this.idUnidad = idUnidad;
-    }
-
-    //    Metodos de la clase
-    
-    public void limpiarProducto(){
-        pb=new ProductoBean();
+    //    METODOS DE LA CLASE
+    public void limpiarProducto() {
+        pb = new ProductoBean();
         RequestContext.getCurrentInstance().execute("PF('widNuevoProducto').show()");
+        descripcionMarcaBandera = false;
     }
-    
+
     public void guardar() {
         pdao.alta(pb.getProducto());
         tabla = pdao.getAll();
+        //ACTUALIZA LA TABLA DE PRODUCTO SI EL NUEVO PRODUCTO, FUE INGRESADO
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Operación terminada", "Producto guardado con exito."));
         RequestContext.getCurrentInstance().execute("PF('widNuevoProducto').hide()");
     }
@@ -146,47 +121,8 @@ public class ProductoFormBean implements java.io.Serializable {
         RequestContext.getCurrentInstance().execute("PF('widTipo').hide()");
     }
 
-    public void guardarMarca() {
-        FacesContext context = FacesContext.getCurrentInstance();
-        Marca m = context.getApplication().evaluateExpressionGet(context, "#{marcaFormBean.mb.marca}", Marca.class);
-        pb.getProducto().setMarca(m);
-        RequestContext.getCurrentInstance().execute("PF('widMarca').hide()");
-    }
-
     public void buscar() {
 
-    }
-
-    //Con estos metos cargo un nuevo producto
-    
-    public String cargarProducto() {
-
-        String resultado = null;
-
-        if (pb.getProducto() != null) {
-
-            pdao.alta(pb.getProducto());
-            tabla = pdao.getAll();
-            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Producto guardado con exito.", "");
-            FacesContext.getCurrentInstance().addMessage(null, facesMessage);
-            RequestContext.getCurrentInstance().execute("PF('confirmarAltaProducto').hide()");
-
-            resultado = "producto.xhtml?faces-redirect=true";
-
-        } else {
-            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Error.", "");
-            FacesContext.getCurrentInstance().addMessage(null, facesMessage);
-        }
-        return resultado;
-    }
-
-    //Este metodo nos permite nos permite preferir el cuadro de dialogo entre alta y modificacion de usuario
-    public void visualizarVentanaConfirmacion() {
-//        if (isAlta() == true) {
-//            RequestContext.getCurrentInstance().execute("PF('confirmarAltaProducto').hide()");
-//        } else {
-//            RequestContext.getCurrentInstance().execute("PF('confirmarModificacionProducto').hide()");
-//        }
     }
 
     public String generarCodigo(long id) {
@@ -214,4 +150,15 @@ public class ProductoFormBean implements java.io.Serializable {
         pdao.estado(p, false);
     }
 
+    public void guardarMarcaenNuevo() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        Marca m = context.getApplication().evaluateExpressionGet(context, "#{marcaFormBean.seleccion}", Marca.class);
+        if (m != null) {
+            pb.getProducto().setMarca(m);
+            RequestContext.getCurrentInstance().execute("PF('widMarca').hide()");
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Exito", "Operación Concretada."));
+        } else {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Error", "No seleciono una Marca."));
+        }
+    }
 }

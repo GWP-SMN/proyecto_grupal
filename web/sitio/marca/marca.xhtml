@@ -35,6 +35,7 @@
                         <p:outputLabel value="Mostrar: "/>
                         <p:selectOneRadio value="#{marcaFormBean.cantidad}" converter="#{javax.faces.convert.IntegerConverter}">
                             <f:selectItem itemLabel="Todos" itemValue="0" />
+                            <f:selectItem itemLabel="10" itemValue="10"/>
                             <f:selectItem itemLabel="50" itemValue="50" />
                             <f:selectItem itemLabel="100" itemValue="100" />
                             <f:selectItem itemLabel="150" itemValue="150" />
@@ -112,7 +113,7 @@
                     </h:form>    
                 </p:dialog>
 
-                <p:dialog widgetVar="widCortar" modal="true" header="Recortar">
+                <p:dialog widgetVar="widCortar" modal="true" header="Recortar" position="top">
                     <h:form id="frmRecortar">
                         <p:commandButton value="Guardar" actionListener="#{imagenFormbean.archivoGuardarMarca(marcaFormBean.mb.marca)}" update=":grwMensaje :frmMarca"/>
                         <p:imageCropper value="#{imagenFormbean.imageRecortada}" image="/temp/marca/#{imagenFormbean.imagen}" boxWidth="400"

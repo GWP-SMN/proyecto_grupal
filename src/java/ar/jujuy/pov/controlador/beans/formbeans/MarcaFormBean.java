@@ -20,22 +20,42 @@ public class MarcaFormBean implements java.io.Serializable {
     @ManagedProperty(value = "#{marcaBean}")
     private MarcaBean mb;
     private List<Marca> tabla;
+    private List<Marca> tablaHabilitado;
     private MarcaDAO mdao;
 
     private boolean imagen;
 
+    private Marca seleccion;
     private Boolean estado;
     private String descripcion;
     private int cantidad;
-    
+
     public MarcaFormBean() {
 
         super();
         mdao = new MarcaDAOImpl();
+        
+        tablaHabilitado=mdao.filtrar("", true, 0) ;
         tabla = mdao.getAll();
     }
 
     //    Getter y Setter de los atributos
+
+    public Marca getSeleccion() {
+        return seleccion;
+    }
+
+    public void setSeleccion(Marca seleccion) {
+        this.seleccion = seleccion;
+    }
+    
+    public List<Marca> getTablaHabilitado() {
+        return tablaHabilitado;
+    }
+
+    public void setTablaHabilitado(List<Marca> tablaHabilitado) {
+        this.tablaHabilitado = tablaHabilitado;
+    }
 
     public int getCantidad() {
         return cantidad;
@@ -60,7 +80,7 @@ public class MarcaFormBean implements java.io.Serializable {
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }
-    
+
     public MarcaBean getMb() {
         return mb;
     }
@@ -154,7 +174,16 @@ public class MarcaFormBean implements java.io.Serializable {
         mdao.estado(m, false);
     }
 
-    public void filtrar(){
-        tabla=mdao.filtrar(descripcion,estado,cantidad);
+    public void filtrar() {
+        tabla = mdao.filtrar(descripcion, estado, cantidad);
+    }
+    
+    public void filtrarHabilitado() {
+        tablaHabilitado = mdao.filtrar(descripcion, true, cantidad);
+    }
+    
+    public void actualizarTablaHabilitado(){
+        tablaHabilitado=mdao.filtrar("", true, 0);
+        descripcion="";
     }
 }
