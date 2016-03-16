@@ -16,30 +16,24 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import org.primefaces.context.RequestContext;
-import org.primefaces.event.RowEditEvent;
 
-/**
- *
- * @author FAMILIA
- */
 @ManagedBean
 @ViewScoped
-public class TipoProductoFormBean implements java.io.Serializable{
-    
+public class TipoProductoFormBean implements java.io.Serializable {
+
     @ManagedProperty(value = "#{tipoProductoBean}")
     private TipoProductoBean tpb;
     private List<TipoProducto> tabla;
     private TipoProductoDAO tpdao;
-    
 
     public TipoProductoFormBean() {
         super();
-        tpdao= new TipoProductoDAOImpl();
+        tpdao = new TipoProductoDAOImpl();
         tabla = tpdao.getAll();
     }
-    
-    //    Getter y Setter de los atributos
 
+    //    Getter y Setter de los atributos
+    
     public TipoProductoBean getTpb() {
         return tpb;
     }
@@ -56,43 +50,37 @@ public class TipoProductoFormBean implements java.io.Serializable{
         this.tabla = tabla;
     }
 
-    
     //    Metodos de la clase
-    
-    public void  limpiarNuevo(){
+    public void limpiarNuevo() {
         tpb.setTipoProducto(new TipoProducto());
         RequestContext.getCurrentInstance().execute("PF('widNuevoTipoProducto').show()");
     }
-    
-    public void onRowEdit(RowEditEvent event) {
-        tpdao.modificar((TipoProducto) event.getObject());
-        //tabla=tpdao.getAll();
-        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO,"Editado con exito.","");
-        FacesContext.getCurrentInstance().addMessage(null, msg);
-    }
-     
-    public void onRowCancel(RowEditEvent event) {
-        FacesMessage msg = new FacesMessage("Edicion cancelada.", "");
-        FacesContext.getCurrentInstance().addMessage(null, msg);
+
+    public void modificar(){
+        tpdao.modificar(tpb.getTipoProducto());
+        tabla = tpdao.getAll();
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Exito", "Operación concretada."));
+        RequestContext.getCurrentInstance().execute("PF('widEditarTP').hide()");
     }
     
-    public void guardar (){
-    
-    tpdao.alta(tpb.getTipoProducto());
-    tabla=tpdao.getAll();
-    FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Tipo de Producto guardado con exito.", "");	
-    FacesContext.getCurrentInstance().addMessage(null, facesMessage);
-    RequestContext.getCurrentInstance().execute("PF('widNuevoTipoProducto').hide()");
-    
+    public void guardar() {
+
+        tpb.getTipoProducto().setEstado(true);
+        tpdao.alta(tpb.getTipoProducto());
+        tabla = tpdao.getAll();
+        FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Tipo de Producto guardado con exito.", "");
+        FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+        RequestContext.getCurrentInstance().execute("PF('widNuevoTipoProducto').hide()");
 
     }
-    
-    public void eliminar(){
-    
-        tpdao.eliminar(tpb.getTipoProducto());
-        tabla=tpdao.getAll();
-        FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Tipo de Producto eliminado con exito.", "");	
-        FacesContext.getCurrentInstance().addMessage(null, facesMessage);
-        RequestContext.getCurrentInstance().execute("PF('confirmarBajaTipoProducto').hide()");
+
+    public void habilitado(TipoProducto tp) {
+        tp.setEstado(true);
+        tpdao.modificar(tp);
+    }
+
+    public void desHabilitado(TipoProducto tp) {
+        tp.setEstado(false);
+        tpdao.modificar(tp);
     }
 }

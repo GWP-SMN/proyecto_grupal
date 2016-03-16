@@ -1,0 +1,136 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:body>
+
+        <ui:composition template="../../resources/Template.xhtml">
+
+            <ui:define name="hoja_estilos">
+
+            </ui:define>
+
+            <ui:define name="title">
+                Tipo Producto
+            </ui:define>
+            <ui:define name="content">
+
+
+                <h:form id="frmTipoProducto">
+
+                    <p:growl id="growlTipoProducto" globalOnly="true" showDetail="true" autoUpdate="true" />
+
+                    <!-- **************************************Boton Alta************************************************ -->
+
+
+
+                    <div class="botonAlta" style="margin-left: 181px;">
+                        <p:commandButton value="Nuevo" actionListener="#{tipoProductoFormBean.limpiarNuevo()}" update=":frmNuevo" />
+                    </div>
+
+                    <!-- ******************************************TABLA DE TIPO de PRODUCTOS********************************************* -->
+
+                    <p:dataTable id="tablaTipoProducto" var="tipoProducto"  editable="true" 
+                                 value="#{tipoProductoFormBean.tabla}" rows="5" paginator="true" style="margin-bottom:20px">
+
+                        <p:column headerText="Id">
+                            <h:outputText value="#{tipoProducto.idTipoProducto}" />
+                        </p:column>
+                        <p:column headerText="Descripción" > 
+                            <p:outputLabel value="#{tipoProducto.descripcion}"/>
+                        </p:column>
+
+                        <p:column headerText="Estado">
+                            <p:commandButton value="Habilitado" rendered="#{tipoProducto.estado}" style="background: greenyellow ;color: black ;" actionListener="#{tipoProductoFormBean.desHabilitado(tipoProducto)}" update="tablaTipoProducto"/>
+                            <p:commandButton value="Deshabilitado" rendered="#{!tipoProducto.estado}" style="background: orangered;color: black ;" actionListener="#{tipoProductoFormBean.habilitado(tipoProducto)}" update="tablaTipoProducto"/>
+                        </p:column>
+
+                        <p:column headerText="Acciones">
+
+                            <p:commandButton icon="ui-icon-pencil" oncomplete="PF('widEditarTP').show()"
+                                             update=":frmEditarTP" actionListener="#{tipoProductoFormBean.tpb.setTipoProducto(tipoProducto)}">
+                                <p:resetInput target=":frmEditarTP"/>
+                            </p:commandButton>
+
+                        </p:column>
+
+                    </p:dataTable>
+
+                </h:form>
+
+                <!-- **************************************POPUP EDITAR************************************************ -->
+
+
+
+                <p:dialog widgetVar="widEditarTP" modal="true" header="Editar Tipo Producto">
+                    <h:form id="frmEditarTP">
+                        <p:panelGrid>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Descripción:" for="inDescripcion"/>
+                                </p:column>
+                                <p:column>
+                                    <p:inputText id="inDescripcion" value="#{tipoProductoFormBean.tpb.tipoProducto.descripcion}" required="true"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Estado:"/>
+                                </p:column>
+                                <p:column>
+                                    <p:selectOneMenu value="#{tipoProductoFormBean.tpb.tipoProducto.estado}">
+                                        <f:selectItem itemLabel="Habilitado" itemValue="#{true}"/>
+                                        <f:selectItem itemLabel="Deshabilitado" itemValue="#{false}"/>
+                                    </p:selectOneMenu>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column style="text-align: center" colspan="2">
+                                    <p:commandButton value="Aceptar" icon="ui-icon-check"
+                                         update=":grwMensaje :frmTipoProducto:tablaTipoProducto :frmEditarTP" 
+                                         actionListener="#{tipoProductoFormBean.modificar()}" />
+                                    <p:commandButton value="Cancelar" icon="ui-icon-closethick" 
+                                                     oncomplete="PF('widEditarTP').hide()"/>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                        
+                    </h:form>
+                </p:dialog>
+                <!-- **************************************POPUP ALTA************************************************ -->
+
+                <p:dialog widgetVar="widNuevoTipoProducto" header="Nuevo Tipo de Producto" modal="true">
+                    <h:form id="frmNuevo">
+                        <p:panelGrid id="pnlgTipoProducto">
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Descripción:"/>
+                                </p:column>
+                                <p:column>
+                                    <p:inputText value="#{tipoProductoFormBean.tpb.tipoProducto.descripcion}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column style="text-align: center" colspan="2">
+                                    <p:commandButton value="Aceptar" icon="ui-icon-check"
+                                                     update=":frmTipoProducto:tablaTipoProducto :frmTipoProducto:growlTipoProducto"
+                                                     actionListener="#{tipoProductoFormBean.guardar()}" />
+                                    <p:commandButton value="Cancelar" icon="ui-icon-closethick"
+                                                     oncomplete="PF('widNuevoTipoProducto').hide()" />
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </h:form>
+                </p:dialog>
+
+
+            </ui:define>
+
+        </ui:composition>
+
+    </h:body>
+</html>

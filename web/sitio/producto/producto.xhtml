@@ -5,7 +5,7 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
-
+    <a href="producto.xhtml"></a>
     <h:body>
 
         <ui:composition template="../../resources/Template.xhtml">
@@ -115,7 +115,7 @@
                             <p:outputLabel value="#{productoFormBean.pb.producto.estado}" />
 
                         </p:panelGrid>
-                        <p:commandButton oncomplete="PF('dlg').hide()" value="Cerrar"/>
+                        <p:commandButton oncomplete="PF('dlg').hide()" icon="ui-icon-closethick" value="Cerrar"/>
                     </h:form>
 
                 </p:dialog>
