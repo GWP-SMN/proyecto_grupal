@@ -15,4 +15,6 @@ public interface TipoProductoDAO {
     public void modificar(TipoProducto tp);
 
     public void eliminar(TipoProducto tp);
+    
+    public List<TipoProducto> filtrar(String descripcion,Boolean estado);
 }

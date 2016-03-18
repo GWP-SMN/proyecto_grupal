@@ -37,26 +37,26 @@
                 <h:form id="frmProducto" enctype="multipart/form-data">
 
 
-                    <p:dataTable id="tablaProducto" var="prod" reflow="true" 
+                    <p:dataTable id="tablaProducto" var="prod" reflow="true" sortMode="multiple"
                                  value="#{productoFormBean.tabla}" rows="6" paginator="true" >
 
                         <p:column headerText="Imagen" width="125">
                             <p:graphicImage value="#{productoFormBean.imagen(prod)}" width="120"/>
                         </p:column>
 
-                        <p:column headerText="Código" width="90">
+                        <p:column headerText="Código" width="90" sortBy="#{productoFormBean.generarCodigo(prod.idProducto)}">
                             <p:barcode type="qr" value="#{productoFormBean.generarCodigo(prod.idProducto)}" width="80" format="png" title="#{productoFormBean.generarCodigo(prod.idProducto)}"/>
                         </p:column>
 
-                        <p:column headerText="Descripción">
+                        <p:column headerText="Descripción" sortBy="#{prod.descripcion}">
                             <p:outputLabel value="#{prod.descripcion}"/>
                         </p:column>
 
-                        <p:column headerText="Marca">
+                        <p:column headerText="Marca" sortBy="#{prod.marca.descripcion}">
                             <p:outputLabel value="#{prod.marca.descripcion}" />
                         </p:column>
 
-                        <p:column headerText="Tipo">
+                        <p:column headerText="Tipo" sortBy="#{prod.tipoProducto.descripcion}">
                             <p:outputLabel value="#{prod.tipoProducto.descripcion}"/>
                         </p:column>
 
@@ -64,7 +64,7 @@
                             <p:outputLabel value="#{prod.stock} #{prod.detalleUnidad.abreviatura}" />
                         </p:column>
 
-                        <p:column headerText="Estado">
+                        <p:column headerText="Estado" sortBy="#{prod.estado}">
                             <p:commandButton value="Habilitado" rendered="#{prod.estado}" style="background: greenyellow ;color: black ;" actionListener="#{productoFormBean.deshabilitar(prod)}" update="tablaProducto"/>
                             <p:commandButton value="Deshabilitado" rendered="#{!prod.estado}" style="background: orangered;color: black ;" actionListener="#{productoFormBean.habilitar(prod)}" update="tablaProducto"/>
                         </p:column>
@@ -89,7 +89,7 @@
 
                 <p:dialog widgetVar="dlg" header="Detalle del Producto"
                           modal="true" showEffect="explode" hideEffect="explode">
-                    <h:form id="f" style="text-align: center;min-width: 400px">
+                    <h:form id="f">
 
                         <p:panelGrid columns="2" layout="grid">
                             <f:facet name="header">
@@ -126,7 +126,7 @@
                 <p:dialog widgetVar="widNuevoProducto" header="Nueva Producto" modal="true">
                     <h:form id="frmNuevo">
                         <p:panelGrid>
-
+                            <!--Descripcion-->
                             <p:row>
                                 <p:column>
                                     <p:outputLabel for="inDescripcion" value="Descripción:"/>
@@ -135,7 +135,7 @@
                                     <p:inputText id="inDescripcion" value="#{productoFormBean.pb.producto.descripcion}" required="true"/>
                                 </p:column>
                             </p:row>
-
+                            <!--Marca-->
                             <p:row>
                                 <p:column>
                                     <p:selectBooleanCheckbox value="#{productoFormBean.descripcionMarcaBandera}">
@@ -150,10 +150,23 @@
                                                      immediate="true"  oncomplete="PF('widMarca').show()" update=":frmMarca"/>
                                 </p:column>
                             </p:row>
+                            <!--Tipo producto-->
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Tipo Producto:" for="inTipoProducto"/>
+                                </p:column>
+                                <p:column>
+                                    <p:inputText id="inTipoProducto" value="#{productoFormBean.pb.producto.tipoProducto.descripcion}" onkeypress="return false" 
+                                                 required="true"/>
+                                    <p:commandButton id="btnTipoProducto" actionListener="#{tipoProductoFormBean.actualizarHabilitado()}" icon="ui-icon-search"  
+                                                     immediate="true"  oncomplete="PF('widTP').show()" update=":frmTP"/>
+                                </p:column>
+                            </p:row>
+
 
                             <p:row>
                                 <p:column style="text-align: center" colspan="2">
-                                    <p:commandButton value="Aceptar" icon="ui-icon-check" update=":frmProducto :grwMensaje"
+                                    <p:commandButton value="Aceptar" icon="ui-icon-check" update=":frmNuevo :grwMensaje"
                                                      actionListener="#{productoFormBean.guardar()}" />
                                     <p:commandButton value="Cancelar" icon="ui-icon-closethick" 
                                                      oncomplete="PF('widNuevoProducto').hide()" />
@@ -202,8 +215,38 @@
                             </p:column>
                         </p:dataTable>
                         <p:panel style="text-align: center">
-                            <p:commandButton value="Aceptar" icon="ui-icon-check" actionListener="#{productoFormBean.guardarMarcaenNuevo()}" update=":frmNuevo:inDescripcionMarca :grwMensaje"/>
+                            <p:commandButton value="Aceptar" icon="ui-icon-check" actionListener="#{productoFormBean.guardarMarcaenNuevo()}" update=":grwMensaje :frmNuevo:inDescripcionMarca"/>
                             <p:commandButton value="Cancelar" oncomplete="PF('widMarca').hide()" icon="ui-icon-closethick"/>
+                        </p:panel>
+                    </h:form>
+                </p:dialog>
+
+                <!-- **************************************POPUP TIPO PRODUCTO************************************************ -->
+                <p:dialog modal="true" header="Tipo Producto Disponible" widgetVar="widTP" maximizable="true" width="400" position="top">
+                    <h:form id="frmTP">
+                        <p:panelGrid>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Descripción:"/>
+                                </p:column>
+                                <p:column>
+                                    <p:inputText value="#{tipoProductoFormBean.descripcion}"/>
+                                </p:column>
+                                <p:column>
+                                    <p:commandButton value="Buscar" actionListener="#{tipoProductoFormBean.filtrarHabilitado()}" update="tablaTipoProducto"/>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                        <p:dataTable id="tablaTipoProducto" var="tipoProducto" sortMode="multiple" selectionMode="single" selection="#{tipoProductoFormBean.seleccion}"
+                                     value="#{tipoProductoFormBean.tablaHabilitado}" rows="8" paginator="true" rowKey="#{tipoProducto.idTipoProducto}">
+
+                            <p:column headerText="Descripción" sortBy="#{tipoProducto.descripcion}"> 
+                                <p:outputLabel value="#{tipoProducto.descripcion}"/>
+                            </p:column>
+                        </p:dataTable>
+                        <p:panel style="text-align: center">
+                            <p:commandButton value="Aceptar" icon="ui-icon-check" actionListener="#{productoFormBean.guardarTPenNuevo()}" update=":frmNuevo:inTipoProducto :grwMensaje"/>
+                            <p:commandButton value="Cancelar" oncomplete="PF('widTP').hide()" icon="ui-icon-closethick"/>
                         </p:panel>
                     </h:form>
                 </p:dialog>

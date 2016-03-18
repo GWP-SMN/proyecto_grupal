@@ -161,4 +161,16 @@ public class ProductoFormBean implements java.io.Serializable {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Error", "No seleciono una Marca."));
         }
     }
+    
+    public void guardarTPenNuevo() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        TipoProducto tp = context.getApplication().evaluateExpressionGet(context, "#{tipoProductoFormBean.seleccion}", TipoProducto.class);
+        if (tp != null) {
+            pb.getProducto().setTipoProducto(tp);
+            RequestContext.getCurrentInstance().execute("PF('widTP').hide()");
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Exito", "Operación Concretada."));
+        } else {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Error", "No seleciono una Tipo Producto."));
+        }
+    }
 }
