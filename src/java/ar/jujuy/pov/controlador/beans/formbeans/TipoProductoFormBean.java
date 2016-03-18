@@ -16,29 +16,52 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import org.primefaces.context.RequestContext;
-import org.primefaces.event.RowEditEvent;
 
-/**
- *
- * @author FAMILIA
- */
 @ManagedBean
 @ViewScoped
-public class TipoProductoFormBean implements java.io.Serializable{
-    
+public class TipoProductoFormBean implements java.io.Serializable {
+
     @ManagedProperty(value = "#{tipoProductoBean}")
     private TipoProductoBean tpb;
     private List<TipoProducto> tabla;
+    private List<TipoProducto> tablaHabilitado;
     private TipoProductoDAO tpdao;
-    
+
+    private TipoProducto seleccion;
+    private String descripcion;
+    private Boolean estado;
 
     public TipoProductoFormBean() {
         super();
-        tpdao= new TipoProductoDAOImpl();
+        tpdao = new TipoProductoDAOImpl();
         tabla = tpdao.getAll();
     }
-    
+
     //    Getter y Setter de los atributos
+
+    public TipoProducto getSeleccion() {
+        return seleccion;
+    }
+
+    public void setSeleccion(TipoProducto seleccion) {
+        this.seleccion = seleccion;
+    }
+    
+    public List<TipoProducto> getTablaHabilitado() {
+        return tablaHabilitado;
+    }
+
+    public Boolean getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Boolean estado) {
+        this.estado = estado;
+    }
+
+    public void setTablaHabilitado(List<TipoProducto> tablaHabilitado) {
+        this.tablaHabilitado = tablaHabilitado;
+    }
 
     public TipoProductoBean getTpb() {
         return tpb;
@@ -56,43 +79,62 @@ public class TipoProductoFormBean implements java.io.Serializable{
         this.tabla = tabla;
     }
 
-    
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
     //    Metodos de la clase
-    
-    public void  limpiarNuevo(){
+    public void limpiarNuevo() {
         tpb.setTipoProducto(new TipoProducto());
         RequestContext.getCurrentInstance().execute("PF('widNuevoTipoProducto').show()");
     }
-    
-    public void onRowEdit(RowEditEvent event) {
-        tpdao.modificar((TipoProducto) event.getObject());
-        //tabla=tpdao.getAll();
-        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO,"Editado con exito.","");
-        FacesContext.getCurrentInstance().addMessage(null, msg);
-    }
-     
-    public void onRowCancel(RowEditEvent event) {
-        FacesMessage msg = new FacesMessage("Edicion cancelada.", "");
-        FacesContext.getCurrentInstance().addMessage(null, msg);
-    }
-    
-    public void guardar (){
-    
-    tpdao.alta(tpb.getTipoProducto());
-    tabla=tpdao.getAll();
-    FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Tipo de Producto guardado con exito.", "");	
-    FacesContext.getCurrentInstance().addMessage(null, facesMessage);
-    RequestContext.getCurrentInstance().execute("PF('widNuevoTipoProducto').hide()");
-    
 
+    public void modificar() {
+        tpdao.modificar(tpb.getTipoProducto());
+        tabla = tpdao.getAll();
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Exito", "Operación concretada."));
+        RequestContext.getCurrentInstance().execute("PF('widEditarTP').hide()");
     }
-    
-    public void eliminar(){
-    
-        tpdao.eliminar(tpb.getTipoProducto());
-        tabla=tpdao.getAll();
-        FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Tipo de Producto eliminado con exito.", "");	
+
+    public void guardar() {
+
+        tpb.getTipoProducto().setEstado(true);
+        tpdao.alta(tpb.getTipoProducto());
+        tabla = tpdao.getAll();
+        FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Tipo de Producto guardado con exito.", "");
         FacesContext.getCurrentInstance().addMessage(null, facesMessage);
-        RequestContext.getCurrentInstance().execute("PF('confirmarBajaTipoProducto').hide()");
+        RequestContext.getCurrentInstance().execute("PF('widNuevoTipoProducto').hide()");
+        RequestContext.getCurrentInstance().execute("PF('widConfirmarAlta').hide()");
+    }
+
+    public void mostrarConfirmacionAlta() {
+        RequestContext.getCurrentInstance().execute("PF('widConfirmarAlta').show()");
+    }
+
+    public void habilitado(TipoProducto tp) {
+        tp.setEstado(true);
+        tpdao.modificar(tp);
+    }
+
+    public void desHabilitado(TipoProducto tp) {
+        tp.setEstado(false);
+        tpdao.modificar(tp);
+    }
+
+    public void filtrar() {
+        tabla = tpdao.filtrar(descripcion, estado);
+    }
+
+    public void filtrarHabilitado() {
+        tablaHabilitado = tpdao.filtrar(descripcion, true);
+    }
+
+    public void actualizarHabilitado() {
+        descripcion = "";
+        tablaHabilitado = tpdao.filtrar("", true);
     }
 }

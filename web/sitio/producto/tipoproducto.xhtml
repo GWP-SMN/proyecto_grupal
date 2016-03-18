@@ -11,115 +11,156 @@
         <ui:composition template="../../resources/Template.xhtml">
 
             <ui:define name="hoja_estilos">
-                <h:outputStylesheet name="./css/cssStyle.css"/>
+
             </ui:define>
-            
+
             <ui:define name="title">
                 Tipo Producto
             </ui:define>
             <ui:define name="content">
-                
-                                			
-		<h:form id="frmTipoProducto">
-                    
+
+
+                <h:form id="frmTipoProducto">
+
                     <p:growl id="growlTipoProducto" globalOnly="true" showDetail="true" autoUpdate="true" />
-                
-<!-- **************************************Boton Alta************************************************ -->
-					
-                        
 
-                    <div class="botonAlta" style="margin-left: 181px;">
-                        <p:commandButton value="Nuevo" actionListener="#{tipoProductoFormBean.limpiarNuevo()}" update=":frmNuevo" >
-                        </p:commandButton>
-                        
-                    </div>
-					
-<!-- ******************************************TABLA DE TIPO de PRODUCTOS********************************************* -->
-					
-                    <div class="tabla" style="width: 55%;" >	
+                    <!-- **************************************Boton Alta************************************************ -->
+                    <p:panel>
+                        <p:panel header="Tipo de Producto" style="max-width: 630px; position: relative; left: 50%;  margin-left: calc( -630px / 2);/*width/2*/">
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column>
+                                        <p:outputLabel value="Descripción: "/>
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText value="#{tipoProductoFormBean.descripcion}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <p:selectOneMenu value="#{tipoProductoFormBean.estado}">
+                                            <f:selectItem itemLabel="Selecionar" itemValue="#{null}"/>
+                                            <f:selectItem itemLabel="Habilitado" itemValue="#{true}"/>
+                                            <f:selectItem itemLabel="Deshabilitado" itemValue="#{false}"/>
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                    <p:column>
+                                        <p:commandButton value="Buscar" actionListener="#{tipoProductoFormBean.filtrar()}" update="frmTipoProducto:tablaTipoProducto"/>
+                                    </p:column>
+                                    <p:column/>
+                                    <p:column>
+                                        <p:commandButton value="Nuevo" actionListener="#{tipoProductoFormBean.limpiarNuevo()}" update=":frmNuevo">
+                                            <p:resetInput target=":frmNuevo"/>
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:panel>
 
-                     <p:dataTable id="tablaTipoProducto" var="tipoProducto"  editable="true" 
-                                    value="#{tipoProductoFormBean.tabla}" rows="5" paginator="true" style="margin-bottom:20px">
+                        <!-- ******************************************TABLA DE TIPO de PRODUCTOS********************************************* -->
 
-                            <f:facet name="header">
-                            Tipos de Productos
-                            </f:facet>
-
-                             <p:ajax event="rowEdit" listener="#{tipoProductoFormBean.onRowEdit}" update=":frmTipoProducto:growlTipoProducto" />
-                             <p:ajax event="rowEditCancel" listener="#{tipoProductoFormBean.onRowCancel}" update=":frmTipoProducto:growlTipoProducto" />
+                        <p:dataTable id="tablaTipoProducto" var="tipoProducto" sortMode="multiple"
+                                     value="#{tipoProductoFormBean.tabla}" rows="5" paginator="true">
 
                             <p:column headerText="Id">
-                                    <h:outputText value="#{tipoProducto.idTipoProducto}" />
+                                <h:outputText value="#{tipoProducto.idTipoProducto}" />
                             </p:column>
-                            <p:column headerText="Descripcion" > 
-                                <p:cellEditor>
-                                    <f:facet name="output"><h:outputText value="#{tipoProducto.descripcion}"  /></f:facet>
-                                    <f:facet name="input"><p:inputText id="modelInput" value="#{tipoProducto.descripcion}"  style="width:100%"/></f:facet>
-                                </p:cellEditor>
-
+                            <p:column headerText="Descripción" sortBy="#{tipoProducto.descripcion}"> 
+                                <p:outputLabel value="#{tipoProducto.descripcion}"/>
                             </p:column>
 
-                            <p:column style="width:32px">
-                                <p:rowEditor />
+                            <p:column headerText="Estado" sortBy="#{tipoProducto.estado}">
+                                <p:commandButton value="Habilitado" rendered="#{tipoProducto.estado}" style="background: greenyellow ;color: black ;" actionListener="#{tipoProductoFormBean.desHabilitado(tipoProducto)}" update="tablaTipoProducto"/>
+                                <p:commandButton value="Deshabilitado" rendered="#{!tipoProducto.estado}" style="background: orangered;color: black ;" actionListener="#{tipoProductoFormBean.habilitado(tipoProducto)}" update="tablaTipoProducto"/>
                             </p:column>
 
                             <p:column headerText="Acciones">
 
-                                    <p:commandButton id="btnBajaUsuario" icon="ui-icon-closethick"
-                                            oncomplete="PF('confirmarBajaTipoProducto').show()"
-                                            update=":frmConfirmacionBaja"
-                                            actionListener="#{tipoProductoFormBean.tpb.setTipoProducto(tipoProducto)}"
-                                            ajax="true">
-                                    </p:commandButton>
+                                <p:commandButton icon="ui-icon-pencil" oncomplete="PF('widEditarTP').show()"
+                                                 update=":frmEditarTP" actionListener="#{tipoProductoFormBean.tpb.setTipoProducto(tipoProducto)}">
+                                    <p:resetInput target=":frmEditarTP"/>
+                                </p:commandButton>
 
                             </p:column>
 
-                     </p:dataTable>
-                     </div>
-		 				
-		</h:form>
-				
-				
-				
-<!-- **************************************POPUP CONFIRMACION DE BAJA************************************************ -->
-				
-                    <h:form id="frmConfirmacionBaja">
+                        </p:dataTable>
+                    </p:panel>
+                </h:form>
 
-                            <p:confirmDialog id="dlgConfirmarBajaTipoProducto" 
-                                    message="¿Esta seguro que desea eliminar?"
-                                    header="Eliminar Tipo de Producto" severity="alert"
-                                    widgetVar="confirmarBajaTipoProducto">
-                                    <p:commandButton value="SI" icon="ui-icon-check"
-                                            update=":frmTipoProducto:tablaTipoProducto :frmTipoProducto:growlTipoProducto" ajax="true"
-                                            actionListener="#{tipoProductoFormBean.eliminar()}" />
-                                    <p:commandButton value="NO" icon="ui-icon-closethick"
-                                            oncomplete="PF('confirmarBajaTipoProducto').hide()" />
-                            </p:confirmDialog>
+
+                <!-- **************************************POPUP EDITAR************************************************ -->
+
+
+
+                <p:dialog widgetVar="widEditarTP" modal="true" header="Editar Tipo Producto">
+                    <h:form id="frmEditarTP">
+                        <p:panelGrid>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Descripción:" for="inDescripcion"/>
+                                </p:column>
+                                <p:column>
+                                    <p:inputText id="inDescripcion" value="#{tipoProductoFormBean.tpb.tipoProducto.descripcion}" required="true" maxlength="30"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Estado:"/>
+                                </p:column>
+                                <p:column>
+                                    <p:selectOneMenu value="#{tipoProductoFormBean.tpb.tipoProducto.estado}">
+                                        <f:selectItem itemLabel="Habilitado" itemValue="#{true}"/>
+                                        <f:selectItem itemLabel="Deshabilitado" itemValue="#{false}"/>
+                                    </p:selectOneMenu>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column style="text-align: center" colspan="2">
+                                    <p:commandButton value="Aceptar" icon="ui-icon-check"
+                                                     update=":grwMensaje :frmTipoProducto:tablaTipoProducto :frmEditarTP" 
+                                                     actionListener="#{tipoProductoFormBean.modificar()}" />
+                                    <p:commandButton value="Cancelar" icon="ui-icon-closethick" 
+                                                     oncomplete="PF('widEditarTP').hide()"/>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
 
                     </h:form>
+                </p:dialog>
+                <!-- **************************************POPUP ALTA************************************************ -->
 
-<!-- **************************************POPUP ALTA************************************************ -->
+                <p:dialog widgetVar="widNuevoTipoProducto" header="Nuevo Tipo de Producto" modal="true">
+                    <h:form id="frmNuevo">
+                        <p:panelGrid id="pnlgTipoProducto">
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel for="inDescripcion" value="Descripción:"/>
+                                </p:column>
+                                <p:column>
+                                    <p:inputText id="inDescripcion" value="#{tipoProductoFormBean.tpb.tipoProducto.descripcion}" required="true" maxlength="30"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column style="text-align: center" colspan="2">
+                                    <p:commandButton value="Aceptar" icon="ui-icon-check"
+                                                     update=":grwMensaje :frmNuevo"
+                                                     actionListener="#{tipoProductoFormBean.mostrarConfirmacionAlta()}" />
+                                    <p:commandButton value="Cancelar" icon="ui-icon-closethick"
+                                                     oncomplete="PF('widNuevoTipoProducto').hide()" />
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </h:form>
+                </p:dialog>
 
-                    <p:dialog widgetVar="widNuevoTipoProducto" header="Nuevo Tipo de Producto" modal="true">
-                        <div style="padding: 20px;">
-                        <h:form id="frmNuevo">
-                            <h:panelGrid columns="2" id="pnlgTipoProducto">
-                                <p:outputLabel value="Descripcion:"/>
-                                <p:inputText value="#{tipoProductoFormBean.tpb.tipoProducto.descripcion}" size="50"/>
+                <p:confirmDialog widgetVar="widConfirmarAlta" header="Confirmar" message="¿Confirmar el nuevo tipo de producto?">
+                    <h:form>
+                        <p:commandButton value="SI" icon="ui-icon-check"
+                                         update=":frmTipoProducto:tablaTipoProducto :frmTipoProducto:growlTipoProducto"
+                                         actionListener="#{tipoProductoFormBean.guardar()}" />
+                        <p:commandButton value="NO" icon="ui-icon-closethick"
+                                         oncomplete="PF('widConfirmarAlta').hide()" />
+                    </h:form>
+                </p:confirmDialog>
 
-                            </h:panelGrid>
-
-                            <br/>
-                            <p:commandButton value="Aceptar" icon="ui-icon-check"
-                                             update=":frmTipoProducto:tablaTipoProducto :frmTipoProducto:growlTipoProducto" ajax="true"
-                                            actionListener="#{tipoProductoFormBean.guardar()}" />
-                                <p:commandButton value="Cancelar" icon="ui-icon-closethick"
-                                            oncomplete="PF('widNuevoTipoProducto').hide()" />
-                        </h:form>
-                        </div>
-                    </p:dialog>
-				
-			
             </ui:define>
 
         </ui:composition>

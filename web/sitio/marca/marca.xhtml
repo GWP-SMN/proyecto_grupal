@@ -22,24 +22,47 @@
 
                 <!-- **************************************Boton Alta************************************************ -->
 
-                <div class="botonAlta">
+                <p:panel header="Filtrar">
                     <h:form>
-                        <p:commandButton value="Nuevo" actionListener="#{marcaFormBean.limpiarNuevo()}" update=":frmNuevo">
-                            <p:resetInput target=":frmNuevo"/>
-                        </p:commandButton>
+                        <p:outputLabel value="Descripción:"/>
+                        <p:inputText value="#{marcaFormBean.descripcion}"/>
+                        <p:outputLabel value="Estado:"/>
+                        <p:selectOneMenu id="selectEstado" value="#{marcaFormBean.estado}">
+                            <f:selectItem itemLabel="Selecionar" itemValue="#{null}"/>
+                            <f:selectItem itemLabel="Habilitado" itemValue="#{true}"/>
+                            <f:selectItem itemLabel="Deshabilitado" itemValue="#{false}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="Mostrar: "/>
+                        <p:selectOneRadio value="#{marcaFormBean.cantidad}" converter="#{javax.faces.convert.IntegerConverter}">
+                            <f:selectItem itemLabel="Todos" itemValue="0" />
+                            <f:selectItem itemLabel="10" itemValue="10"/>
+                            <f:selectItem itemLabel="50" itemValue="50" />
+                            <f:selectItem itemLabel="100" itemValue="100" />
+                            <f:selectItem itemLabel="150" itemValue="150" />
+                        </p:selectOneRadio>
+                        <p:commandButton value="Filtrar" actionListener="#{marcaFormBean.filtrar()}" update=":frmMarca"/>
                     </h:form>
-                </div>
+                </p:panel>
+
+                <h:form>
+                    <p:commandButton value="Nuevo" actionListener="#{marcaFormBean.limpiarNuevo()}" update=":frmNuevo">
+                        <p:resetInput target=":frmNuevo"/>
+                    </p:commandButton>
+                </h:form>
 
                 <!-- ******************************************TABLA DE MARCAS********************************************* -->
                 <h:form id="frmMarca" enctype="multipart/form-data">
 
-                    <p:dataTable id="tablaMarca" var="marca" reflow="true"
+                    <p:dataTable id="tablaMarca" var="marca" reflow="true" sortMode="multiple"
                                  value="#{marcaFormBean.tabla}" rows="5" paginator="true">
 
+                        <p:column headerText="Codigo" width="125" sortBy="#{marca.idMarca}">
+                            <p:outputLabel value="#{marca.idMarca}"/>
+                        </p:column>
                         <p:column headerText="Imagen" width="125">
                             <p:graphicImage value="#{marcaFormBean.direccionImagen(marca)}" width="120" cache="false"/>
                         </p:column>
-                        <p:column headerText="Descripcion" > 
+                        <p:column headerText="Descripcion" sortBy="#{marca.descripcion}"> 
                             <p:outputLabel value="#{marca.descripcion}"/>
                         </p:column>
 
@@ -90,10 +113,10 @@
                     </h:form>    
                 </p:dialog>
 
-                <p:dialog widgetVar="widCortar" modal="true" header="Recortar">
+                <p:dialog widgetVar="widCortar" modal="true" header="Recortar" position="top">
                     <h:form id="frmRecortar">
-                        <p:commandButton value="Guardar" actionListener="#{imagenFormbean.archivoGuardarMarca(marcaFormBean.mb.marca)}" update=":grwMensaje :frmMarca" ajax="false"/>
-                        <p:imageCropper value="#{imagenFormbean.imageRecortada}" image="/temp/marca/#{imagenFormbean.imagen}" 
+                        <p:commandButton value="Guardar" actionListener="#{imagenFormbean.archivoGuardarMarca(marcaFormBean.mb.marca)}" update=":grwMensaje :frmMarca"/>
+                        <p:imageCropper value="#{imagenFormbean.imageRecortada}" image="/temp/marca/#{imagenFormbean.imagen}" boxWidth="400"
                                         aspectRatio="1.4" rendered="#{imagenFormbean.imagenCargada()}"/>
                     </h:form>
                 </p:dialog>

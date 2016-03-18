@@ -15,4 +15,6 @@ public interface MarcaDAO {
     public void eliminar(Marca m);
     
     public void estado(Marca m,boolean estado);
+    
+    public List<Marca> filtrar(String descripcion,Boolean estado,int cantidad);
 }

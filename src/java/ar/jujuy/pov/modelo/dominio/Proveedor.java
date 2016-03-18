@@ -10,6 +10,7 @@ public class Proveedor  implements java.io.Serializable {
      private int idProveedor;
      private String descripcion;
      private boolean estado;
+     private String cuit;
 
     public Proveedor() {
     }
@@ -37,6 +38,15 @@ public class Proveedor  implements java.io.Serializable {
         this.estado = estado;
     }
 
+    public String getCuit() {
+        return cuit;
+    }
+
+    public void setCuit(String cuit) {
+        this.cuit = cuit;
+    }
+
+    
 }
 
 

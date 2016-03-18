@@ -13,6 +13,7 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 
 /**
  *
@@ -27,6 +28,7 @@ public class TipoProductoDAOImpl implements TipoProductoDAO,Serializable {
         try {
             session = HibernateUtil.getSessionFactory().openSession();
             Criteria criteria = session.createCriteria(TipoProducto.class);
+            criteria.setMaxResults(100);
             listaTiposProductos = criteria.list();
         } catch (HibernateException e) {
             System.out.println(e.getMessage());
@@ -110,5 +112,30 @@ public class TipoProductoDAOImpl implements TipoProductoDAO,Serializable {
             }
         }
     }
-
+    
+    @Override
+    public List<TipoProducto> filtrar(String descripcion,Boolean estado){
+        List<TipoProducto> listaTiposProductos = null;
+        Session session = null;
+        try {
+            session = HibernateUtil.getSessionFactory().openSession();
+            Criteria criteria = session.createCriteria(TipoProducto.class);
+            if (!descripcion.equals("")) {
+                criteria.add(Restrictions.ilike("descripcion", "%"+descripcion+"%"));
+            }
+            if (estado!=null) {
+                criteria.add(Restrictions.eq("estado", estado));
+            }
+            
+            listaTiposProductos = criteria.list();
+        } catch (HibernateException e) {
+            System.out.println(e.getMessage());
+            session.getTransaction().rollback();
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+        return listaTiposProductos;
+    }
 }
