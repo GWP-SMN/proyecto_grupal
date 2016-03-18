@@ -8,9 +8,11 @@ public interface ProveedorDAO {
 
     public List<Proveedor> getAll();
 
-    public void alta();
+    public void alta(Proveedor p);
 
-    public void modificar();
+    public void modificar(Proveedor p);
 
     public void eliminar();
+    
+    public void estado(Proveedor p,boolean estado);
 }
