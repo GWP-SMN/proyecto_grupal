@@ -5,7 +5,7 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:h="http://xmlns.jcp.org/jsf/html">
 
-    <h:body>
+   <h:body>
 
         <ui:composition template="../../resources/Template.xhtml">
 
@@ -13,7 +13,165 @@
                 Proveedor
             </ui:define>
             <ui:define name="content">
-                
+
+
+
+
+                <p:growl id="growl" globalOnly="true" showDetail="true" autoUpdate="true" />
+
+                <!-- **************************************Boton Alta************************************************ -->
+
+               <h:form>
+                    <p:commandButton value="Nuevo" actionListener="#{proveedorFormBean.limpiarNuevo()}" update=":frmNuevo">
+                        <p:resetInput target=":frmNuevo"/>
+                    </p:commandButton>
+                </h:form>
+
+                <!-- ******************************************TABLA DE MARCAS********************************************* -->
+                <h:form id="frmProveedor">
+
+                    <p:dataTable id="tablaProveedor" var="proveedor" reflow="true" sortMode="multiple"
+                                 value="#{proveedorFormBean.tablaProveedro}" rows="5" paginator="true">
+
+                        <p:column headerText="Codigo" width="125" sortBy="#{proveedor.idProveedor}">
+                            <p:outputLabel value="#{proveedor.idProveedor}"/>
+                        </p:column>
+                        
+                        <p:column headerText="Descripcion" sortBy="#{proveedor.descripcion}"> 
+                            <p:outputLabel value="#{proveedor.descripcion}"/>
+                        </p:column>
+
+                        
+                        <p:column headerText="CUIT" sortBy="#{proveedor.cuit}"> 
+                            <p:outputLabel value="#{proveedor.cuit}"/>
+                        </p:column>
+                        
+                        <p:column headerText="Estado">
+                            <p:commandButton value="Habilitado" rendered="#{proveedor.estado}" style="background: greenyellow ;color: black ;" actionListener="#{proveedorFormBean.deshabilitar(proveedor)}" update="tablaProveedor"/>
+                            <p:commandButton value="Deshabilitado" rendered="#{!proveedor.estado}" style="background: orangered;color: black ;" actionListener="#{proveedorFormBean.habilitar(proveedor)}" update="tablaProveedor"/>
+                        </p:column>
+
+                        <p:column headerText="Acciones">
+
+                            
+                            <p:commandButton icon="ui-icon-pencil" title="Edita la Marca." update=":frmModificar"
+                                             actionListener="#{proveedorFormBean.cargarProveedor(proveedor)}" >
+                                <p:resetInput target=":frmModificar"/>
+                            </p:commandButton>
+
+                        </p:column>
+
+                    </p:dataTable>
+
+                </h:form>
+               
+                <!-- **************************************POPUP MODIFICAR************************************************ -->
+                <p:dialog widgetVar="widModificarProveedor" header="Modificar Proveedor" modal="true">
+                    <h:form id="frmModificar">
+                        <p:panelGrid>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Descripción:"/>
+                                </p:column>
+                                <p:column>
+                                    <p:inputText value="#{proveedorFormBean.proveedorBean.proveedor.descripcion}" maxlength="50" required="true" 
+                                                 requiredMessage="Descripción necesaria."/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="CUIT"/>
+                                </p:column>
+                                <p:column>
+                                    <p:inputText value="#{proveedorFormBean.proveedorBean.proveedor.cuit}" maxlength="30" required="true" 
+                                                 requiredMessage="CUIT necesario."/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2" style="text-align: center">
+                                    <p:commandButton value="Aceptar" icon="ui-icon-check" actionListener="#{proveedorFormBean.confirmarModificarShow()}"/>
+                                    <p:commandButton value="Cancelar" icon="ui-icon-closethick" oncomplete="PF('widModificarProveedor').hide()"/>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </h:form>                   
+                </p:dialog>
+
+                <p:dialog widgetVar="widConfirmarModificar" header="Confirmar" modal="true">
+                    <h:form>
+                        <p:panelGrid>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="¿Desea confirmar la modificación de esta marca?"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column style="text-align: center">
+                                    <p:commandButton value="Aceptar" icon="ui-icon-check" actionListener="#{proveedorFormBean.modificar()}" update=":frmProveedor :growl"/>
+                                    <p:commandButton value="Cancelar" icon="ui-icon-closethick" oncomplete="PF('widConfirmarModificar').hide()"/>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </h:form>
+                </p:dialog>
+
+               <!-- **************************************POPUP ALTA************************************************ -->
+
+                <p:dialog widgetVar="widNuevoProveedor" header="Nuevo Proveedor " modal="true">
+                    <h:form id="frmNuevo" >
+                        <p:panelGrid>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel for="idDescripcion" value="Descripcion:"/>
+                                </p:column>
+                                <p:column>
+                                    <p:inputText id="idDescripcion" value="#{proveedorFormBean.proveedorBean.proveedor.descripcion}" required="true" 
+                                                 requiredMessage="Descripción necesaria." maxlength="30"/>
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel for="idCUIT" value="CUIT:"/>
+                                </p:column>
+                                <p:column>
+                                    <p:inputText id="idCUIT" value="#{proveedorFormBean.proveedorBean.proveedor.cuit}" required="true" 
+                                                 requiredMessage="CUIT necesario." maxlength="30"/>
+                                </p:column>
+                            </p:row>
+                            
+                            <p:row style="text-align: center">
+                                <p:column colspan="2">
+                                    <p:commandButton value="Aceptar" icon="ui-icon-check"
+                                                     update="growl :frmNuevo" actionListener="#{proveedorFormBean.confirmarNuevoShow()}"/>
+
+                                    <p:commandButton value="Cancelar" icon="ui-icon-closethick"
+                                                     oncomplete="PF('widNuevaMarca').hide()" />
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </h:form>
+                </p:dialog>
+
+                <p:dialog widgetVar="widNuevoConfirmar" modal="true" header="Confirmar">
+                    <h:form>
+                        <p:panelGrid>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="¿Desea confirmar nuevo Proveedor?"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:commandButton value="Si" actionListener="#{proveedorFormBean.guardar()}"
+                                                     icon="ui-icon-check" update="frmProveedor" oncomplete="PF('widNuevoConfirmar').hide()"/>
+                                    <p:commandButton value="No" icon="ui-icon-closethick" oncomplete="PF('widNuevoConfirmar').hide()"/>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </h:form>
+                </p:dialog>
+
             </ui:define>
 
         </ui:composition>
